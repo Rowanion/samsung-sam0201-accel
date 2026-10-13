@@ -1,9 +1,14 @@
 # samsung-sam0201-accel
 
-DKMS-packaged kernel patch that adds support for the ACPI device ID `SAM0201` to
-the `st_accel_i2c` IIO driver, enabling the built-in accelerometer on Samsung
+DKMS-packaged kernel patch that adds support for the ACPI device ID `SAM0201`
+to the `st_accel` IIO driver, enabling the built-in accelerometer on Samsung
 Galaxy Book devices whose firmware exposes the accelerometer under this
-nonstandard ID instead of a standard ST/SMO8xxx HID.
+nonstandard ID instead of a standard ST/SMO8xxx HID. The patch does two
+things: maps `SAM0201` to the compatible LIS2HH12 driver in
+`st_accel_i2c.c`, and reads the firmware-supplied `ROTM` mount matrix in
+`st_accel_core.c` so the reported orientation is correctly calibrated for
+the device's actual physical chip mounting, rather than falling back to a
+generic/identity matrix.
 
 Confirmed working on:
 
@@ -23,7 +28,8 @@ Kionix K2HH chip, register-compatible with the ST LIS2HH12.
    kernel, etc.).
 3. Downloads the matching vanilla kernel.org source for your exact kernel
    version, pulls just the four `st_accel_*` files it needs.
-4. Applies `patches/0001-add-SAM0201-acpi-id.patch`.
+4. Applies `patches/0001-add-SAM0201-acpi-id.patch` (both the ACPI ID
+   mapping and the ROTM mount-matrix read).
 5. Registers the patched driver as a DKMS module, so it's rebuilt
    automatically on future kernel updates.
 6. Loads it and verifies the accelerometer reports as `lis2hh12`.
@@ -70,6 +76,22 @@ To remove:
 ./uninstall.sh
 ```
 
+## Verifying the mount matrix
+
+The accelerometer reporting as `lis2hh12` only confirms the chip ID match
+worked. To confirm the firmware's real orientation calibration (`ROTM`) is
+actually being read rather than falling back to a generic matrix, check:
+
+```bash
+cat /sys/bus/iio/devices/iio:device*/mount_matrix
+```
+
+On the Galaxy Book 12 this reads `0, -1, 0; -1, 0, 0; 0, 0, -1`. If your
+device prints a plain identity matrix (`1, 0, 0; 0, 1, 0; 0, 0, 1`) instead,
+the `ROTM` hunk likely failed to apply against your kernel version — rotation
+may still work in practice via a fallback path, but isn't using the
+hardware-calibrated values.
+
 ## Known limitation
 
 Like any out-of-tree DKMS module, a future kernel release could change
@@ -78,11 +100,13 @@ failed build after a kernel update, that's what happened — open an issue.
 
 ## Credit
 
-ACPI ID fix originally discovered and patched by
-[fxjosemi](https://github.com/fxjosemi/Samsung-Galaxy-Book-12-Linux) for the
-Galaxy Book 12. This repo packages the same patch as a reproducible,
-DKMS-managed install for the wider family of Galaxy Book devices sharing this
-ACPI ID, confirmed here on the Galaxy Book 10.6.
+The patch (`patches/0001-add-SAM0201-acpi-id.patch`) is used verbatim,
+unmodified, from
+[fxjosemi/Samsung-Galaxy-Book-12-Linux](https://github.com/fxjosemi/Samsung-Galaxy-Book-12-Linux),
+who discovered and authored the `SAM0201`/K2HH/LIS2HH12 ACPI mapping and
+`ROTM` mount-matrix fix for the Galaxy Book 12. This repo packages the same
+patch as a reproducible, DKMS-managed install, confirmed here to also apply
+cleanly and work on the Galaxy Book 10.6 (SM-W620).
 
 ## License
 
