@@ -104,8 +104,12 @@ The patch (`patches/0001-add-SAM0201-acpi-id.patch`) is used verbatim,
 unmodified, from
 [fxjosemi/Samsung-Galaxy-Book-12-Linux](https://github.com/fxjosemi/Samsung-Galaxy-Book-12-Linux),
 who discovered and authored the `SAM0201`/K2HH/LIS2HH12 ACPI mapping and
-`ROTM` mount-matrix fix for the Galaxy Book 12. This repo packages the same
-patch as a reproducible, DKMS-managed install, confirmed here to also apply
+`ROTM` mount-matrix fix for the Galaxy Book 12. Their own installer copies
+prebuilt `.ko` files statically and relies on CachyOS-specific pacman hooks
+for rebuilding after kernel updates; this repo instead wires the same patch
+into DKMS, so it rebuilds automatically on any DKMS-supporting distro
+(Fedora included) without extra per-update steps. This repo packages the
+same patch as a reproducible, DKMS-managed install, confirmed here to also apply
 cleanly and work on the Galaxy Book 10.6 (SM-W620).
 
 ## License
