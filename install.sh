@@ -72,7 +72,6 @@ BUILT_MODULE_NAME[1]="st_accel_i2c"
 DEST_MODULE_LOCATION[1]="/updates/drivers/iio/accel"
 AUTOINSTALL="yes"
 MAKE[0]="make -C \${kernel_source_dir} M=\${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build modules"
-CLEAN="make -C \${kernel_source_dir} M=\${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build clean"
 EOF
 
 echo "==> Registering with DKMS..."
