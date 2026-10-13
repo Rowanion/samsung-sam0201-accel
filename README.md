@@ -31,6 +31,31 @@ Kionix K2HH chip, register-compatible with the ST LIS2HH12.
 No kernel source is vendored in this repo — it's fetched fresh for whatever
 kernel you're running, so the fix doesn't go stale as you update.
 
+## Dependencies
+
+`install.sh` installs these automatically via `dnf`, listed here for
+reference:
+
+- `dkms`
+- `patch`
+- `gcc`, `make`
+- `kernel-devel` (matching your exact running kernel — `kernel-devel-$(uname -r)`)
+- `curl`, `tar`, `xz`
+
+These are enough when building against a distro `kernel-devel` package, since
+it ships prebuilt Kbuild tooling (`scripts/`, `tools/objtool`, `Module.symvers`)
+matching the installed kernel.
+
+If you instead build against a plain vanilla kernel.org source tree (e.g. for
+development/debugging rather than via this script), `make modules_prepare`
+rebuilds that host tooling from scratch, which additionally pulled in on
+Fedora:
+
+- `flex`, `bison`
+- `openssl-devel` (for `scripts/sign-file`)
+- `elfutils-libelf-devel` (for `gelf.h`, needed by `tools/objtool`)
+- `ncurses-devel`, `perl-interpreter`, `perl-devel`, `rsync`, `dwarves`, `bc`
+
 ## Usage
 
 ```bash

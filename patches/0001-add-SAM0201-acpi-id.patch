@@ -2,9 +2,9 @@
 +++ b/drivers/iio/accel/st_accel_i2c.c
 @@ -130,6 +130,7 @@
  MODULE_DEVICE_TABLE(of, st_accel_of_match);
-
+ 
  static const struct acpi_device_id st_accel_acpi_match[] = {
-+     {"SAM0201", (kernel_ulong_t)LIS2HH12_ACCEL_DEV_NAME},
-      {"SMO8840", (kernel_ulong_t)LIS2DH12_ACCEL_DEV_NAME},
-      {"SMO8A90", (kernel_ulong_t)LNG2DM_ACCEL_DEV_NAME},
-      { }
++	{"SAM0201", (kernel_ulong_t)LIS2HH12_ACCEL_DEV_NAME},
+ 	{"SMO8840", (kernel_ulong_t)LIS2DH12_ACCEL_DEV_NAME},
+ 	{"SMO8A90", (kernel_ulong_t)LNG2DM_ACCEL_DEV_NAME},
+ 	{ }
